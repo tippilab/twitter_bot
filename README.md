@@ -7,30 +7,6 @@ Fill in the required fields on the website [https://apps.twitter.com/app/new](ht
 Click **"Keys and Access Tokens"** and you look your *Consumer Key (API Key)* and *Consumer Secret (API Secret)*.  
 Click **"create my access token"** and you give your *Access Token* and *Access Token Secret*.
 
-## Install Environment variables 
-```
-$ export CONSUMER_KEY='your consumer key'
-$ export CONSUMER_SECRET='your consumer secret'
-$ export ACCESS_TOKEN='your access token'
-$ export ACCESS_TOKEN_SECRET='your access token secret'
-```
-
-## Creation of virtual environment
-
-Creation of virtual environment is done by executing the command venv:
-
-`python3 -m venv /path/to/new/virtual/environment`
-
-### Activate virtual environment
-
-If you use Posix Platform:
-
-`$ source <venv>/bin/activate`
-
-### Install the required packages
-
-`$ pip install -r requirements.txt`
-
 ## Run script using docker
 
 ```
