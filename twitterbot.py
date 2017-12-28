@@ -1,34 +1,64 @@
+import csv
+import os
+
 import tweepy
-from random import randint
+import click
 
-list_users_url = [
-    'https://twitter.com/4gophers',
-    'https://twitter.com/zkonstantin',
-    'https://twitter.com/nmishin',
-    'https://twitter.com/iamstarkov',
-    'https://twitter.com/dcromster'
-]
 
-list_users = []
+@click.command()
+@click.option('--consumer_key', default=os.environ.get('CONSUMER_KEY'),
+              help='CONSUMER_KEY')
+@click.option('--consumer_secret', default=os.environ.get('CONSUMER_SECRET'),
+              help='CONSUMER_KEY')
+@click.option('--access_token', default=os.environ.get('ACCESS_TOKEN'),
+              help='ACCESS_TOKEN')
+@click.option('--access_token_secret',
+              default=os.environ.get('ACCESS_TOKEN_SECRET'),
+              help='ACCESS_TOKEN_SECRET')
+@click.option('--limit', default=1000,
+              help='set limit amount of users you want to follow')
+def main(consumer_key, consumer_secret, access_token,
+         access_token_secret, limit):
+    with open('followers.txt', 'r') as file:
+        list_users_url = []
+        reader = csv.reader(file)
+        for row in reader:
+            list_users_url.append(row[0])
 
-for user_url in list_users_url:
-    list_users.append(user_url.split('https://twitter.com/')[-1])
+    list_users = []
+    for user_url in list_users_url:
+        if 'https://twitter.com/' in user_url:
+            list_users.append(user_url.split('https://twitter.com/')[-1])
+        elif 'http://twitter.com/' in user_url:
+            list_users.append(user_url.split('http://twitter.com/')[-1])
+    list_users = list(set(list_users))
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
 
-consumer_key = 'your'
-consumer_secret = 'your'
-access_token = 'your'
-access_token_secret = 'your'
+    api = tweepy.API(
+        auth, wait_on_rate_limit=True,
+        wait_on_rate_limit_notify=True,
+        retry_count=10, retry_delay=5,
+        retry_errors=5
+    )
+    counter = 0
+    with open('followers_cache.txt', 'ar+') as f:
+        cached_users = []
+        reader = csv.reader(f)
+        for row in reader:
+            if row:
+                cached_users.append(row[0])
+        for user in list_users:
+            if user not in cached_users:
+                print("Follow " + user)
+                api.create_friendship(user)
+                f.write(user + '\n')
+                counter += 1
+                if counter >= limit:
+                    return
+            else:
+                print("Skipped " + user + '\n')
 
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(
-                auth, wait_on_rate_limit=True, 
-                wait_on_rate_limit_notify=True, 
-                retry_count=10, retry_delay=5, 
-                retry_errors=5
-                )
-
-for user in list_users:
-    print("Follow " + user)
-    api.create_friendship(user)
+if __name__ == "__main__":
+    main()
