@@ -35,5 +35,5 @@ If you use Posix Platform:
 
 ```
 docker build -t test/test .
-docker run -it -e CONSUMER_KEY='your_consumer_key' -e CONSUMER_SECRET='your_consumer_secret' -e ACCESS_TOKEN='your_access_token' -e ACCESS_TOKEN_SECRET='your_access_token_secret' test/test
+docker run -e CONSUMER_KEY='your_consumer_key' -e CONSUMER_SECRET='your_consumer_secret' -e ACCESS_TOKEN='your_access_token' -e ACCESS_TOKEN_SECRET='your_access_token_secret' test/test
 ```
