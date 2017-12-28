@@ -26,7 +26,7 @@ api = tweepy.API(
     retry_count=10, retry_delay=5,
     retry_errors=5
 )
-f = open('followers_cashe.txt', 'a')
+f = open('followers_caсhe.csv', 'a')
 
 for user in list_users:
     print("Follow " + user)
