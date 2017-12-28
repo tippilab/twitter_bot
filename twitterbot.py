@@ -31,7 +31,7 @@ def main(consumer_key, consumer_secret, access_token,
             list_users.append(user_url.split('https://twitter.com/')[-1])
         elif 'http://twitter.com/' in user_url:
             list_users.append(user_url.split('http://twitter.com/')[-1])
-
+    list_users = list(set(list_users))
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
@@ -41,21 +41,17 @@ def main(consumer_key, consumer_secret, access_token,
         retry_count=10, retry_delay=5,
         retry_errors=5
     )
-    print(api)
     counter = 0
     with open('followers_cache.txt', 'ar+') as f:
         cached_users = []
-        tmp_cache = []
         reader = csv.reader(f)
         for row in reader:
             cached_users.append(row[0])
         for user in list_users:
-            if ('https://twitter.com/' + user) not in cached_users and (
-                    'https://twitter.com/' + user + '\n') not in tmp_cache:
+            if ('https://twitter.com/' + user) not in cached_users:
                 print("Follow " + user)
                 api.create_friendship(user)
                 f.write('https://twitter.com/' + user + '\n')
-                tmp_cache.append('https://twitter.com/' + user + '\n')
                 counter += 1
                 if counter >= limit:
                     return
