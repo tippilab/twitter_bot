@@ -46,12 +46,13 @@ def main(consumer_key, consumer_secret, access_token,
         cached_users = []
         reader = csv.reader(f)
         for row in reader:
-            cached_users.append(row[0])
+            if row:
+                cached_users.append(row[0])
         for user in list_users:
-            if ('https://twitter.com/' + user) not in cached_users:
+            if user not in cached_users:
                 print("Follow " + user)
                 api.create_friendship(user)
-                f.write('https://twitter.com/' + user + '\n')
+                f.write(user + '\n')
                 counter += 1
                 if counter >= limit:
                     return
