@@ -31,10 +31,9 @@ If you use Posix Platform:
 
 `$ pip install -r requirements.txt`
 
-## Run script
-
-In *list_users_url* you will have links to the people you want to follow.
+## Run script using docker
 
 ```
-$ python twitterbot.py
+docker build -t test/test .
+docker run -it -e CONSUMER_KEY='your_consumer_key' -e CONSUMER_SECRET='your_consumer_secret' -e ACCESS_TOKEN='your_access_token' -e ACCESS_TOKEN_SECRET='your_access_token_secret' test/test
 ```
