@@ -26,7 +26,11 @@ api = tweepy.API(
     retry_count=10, retry_delay=5,
     retry_errors=5
 )
+f = open('followers_cashe.txt', 'a')
 
 for user in list_users:
     print("Follow " + user)
     api.create_friendship(user)
+    f.write('https://twitter.com/' + user + '\n')
+
+f.close()
