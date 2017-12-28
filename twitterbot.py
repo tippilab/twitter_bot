@@ -1,12 +1,11 @@
 import os
 
+import pandas as pd
 import tweepy
 
-list_users_url = []
-f = open('followers.txt')
-for line in f:
-    list_users_url.append(line)
-f.close()
+df = pd.read_csv('followers.csv', index_col=False)
+list_users_url = list(df['twitter_url'])
+
 
 list_users = []
 
