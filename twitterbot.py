@@ -1,16 +1,19 @@
 import os
 
-import pandas as pd
+import csv
 import tweepy
 
-df = pd.read_csv('followers.csv', index_col=False)
-list_users_url = list(df['twitter_url'])
-
+with open('followers.txt', 'r') as file:
+    list_users_url = []
+    reader = csv.reader(file)
+    for row in reader:
+        list_users_url.append(row[0])
 
 list_users = []
-
 for user_url in list_users_url:
-    list_users.append(user_url.split('https://twitter.com/')[-1])
+    if 'https://twitter.com/' in user_url:
+        list_users.append(user_url.split('https://twitter.com/')[-1])
+
 
 consumer_key = os.environ.get('CONSUMER_KEY')
 consumer_secret = os.environ.get('CONSUMER_SECRET')
@@ -26,11 +29,10 @@ api = tweepy.API(
     retry_count=10, retry_delay=5,
     retry_errors=5
 )
-f = open('followers_caсhe.csv', 'a')
 
-for user in list_users:
-    print("Follow " + user)
-    api.create_friendship(user)
-    f.write('https://twitter.com/' + user + '\n')
 
-f.close()
+with open('followers_cache.txt', 'a') as f:
+    for user in list_users:
+        print("Follow " + user)
+        api.create_friendship(user)
+        f.write('https://twitter.com/' + user + '\n')
