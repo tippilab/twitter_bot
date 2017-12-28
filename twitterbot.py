@@ -2,13 +2,11 @@ import os
 
 import tweepy
 
-list_users_url = [
-    'https://twitter.com/hexlessons_ru',
-    'https://twitter.com/freetonik',
-    'https://twitter.com/htmlacademy_ru',
-    'https://twitter.com/JavaHexlet',
-    'https://twitter.com/hexlet_io'
-]
+list_users_url = []
+f = open('followers.txt')
+for line in f:
+    list_users_url.append(line)
+f.close()
 
 list_users = []
 
