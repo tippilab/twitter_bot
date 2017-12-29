@@ -3,8 +3,8 @@ import logging
 import os
 import time
 
-import tweepy
 import click
+import tweepy
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
