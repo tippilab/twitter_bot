@@ -1,14 +1,18 @@
 import csv
+import logging
 import os
-import sys
 import time
-import traceback
 
 import tweepy
 import click
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @click.command()
+@click.option('--filename', default='twitter_usernames.csv',
+              help='filename with usernames list of users you want to follow')
 @click.option('--consumer_key', default=os.environ.get('CONSUMER_KEY'),
               help='CONSUMER_KEY')
 @click.option('--consumer_secret', default=os.environ.get('CONSUMER_SECRET'),
@@ -21,13 +25,14 @@ import click
 @click.option('--limit', default=1000,
               help='set limit amount of users you want to follow')
 def main(consumer_key, consumer_secret, access_token,
-         access_token_secret, limit):
-    with open('twitter_usernames.csv', 'r') as file:
+         access_token_secret, limit, filename):
+    with open(filename, 'r') as file:
         list_users = []
         reader = csv.reader(file)
         for row in reader:
             list_users.append(row[0])
     list_users = list(set(list_users))
+    logger.info("Successfull reading of usernames file")
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(
@@ -42,31 +47,40 @@ def main(consumer_key, consumer_secret, access_token,
     try:
         with open('followers_cache_{}.txt'.format(currrent_user), 'r') as f:
             cached_local_users = [line.rstrip('\n') for line in f]
+        logger.debug("Successfull reading of local cache")
     except:
         cached_local_users = []
+        logger.debug("No local cache detected, new cache file will be created")
     cached_users.extend(cached_local_users)
     cached_users = list(set(cached_users))
     try:
         for user in list_users:
             if user and user not in cached_users:
-                print("Follow " + user)
+                logger.info("Follow {}".format(user))
                 try:
+                    pass
                     api.create_friendship(user)
                 except tweepy.error.TweepError:
-                    traceback.print_exc(file=sys.stdout)
+                    logger.exception('')
                 cached_users.append(user)
                 counter += 1
                 if counter >= limit:
+                    logger.info("The limit of {} followings is reached".format(
+                        limit))
                     return
             else:
-                print("Skipped " + user + '\n')
+                logger.info("Skipped {}".format(user))
     finally:
+        logger.info('Writiind local cache into"followers_cache_{}.txt"'.format(
+            currrent_user))
         with open('followers_cache_{}.txt'.format(currrent_user), 'w') as f:
             f.writelines(["%s\n" % item for item in cached_users])
 
 
 def cache_handler(api, currrent_user):
     usernames = []
+    logger.info(
+        "Start fetching {} follwers into local cache".format(currrent_user))
     for page in tweepy.Cursor(api.friends_ids,
                               screen_name=currrent_user).pages():
         wanted_parts = round(len(page) / 100) + 1
@@ -75,7 +89,9 @@ def cache_handler(api, currrent_user):
             users_part = api.lookup_users(user_ids=part)
             for username in users_part:
                 usernames.append(username.screen_name)
+        logger.debug("Part finished. Waiting 60 seconds to continue")
         time.sleep(60)
+    logger.info("Finished fetching followers to local cache")
     return usernames
 
 
