@@ -43,7 +43,7 @@ def main(consumer_key, consumer_secret, access_token,
 
     f = open('friends_cache_{}.txt'.format(currrent_user), 'a')
 
-    for fr in limit:
+    for fr in range(limit):
         if len(api.followers_ids(list_friends[fr])) < 200:
             api.destroy_friendship(list_friends[fr])
             print("Unfollow " + list_friends[fr])
