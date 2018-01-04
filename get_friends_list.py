@@ -32,7 +32,9 @@ def main(consumer_key, consumer_secret, access_token,
 
     with open('friends_{}.txt'.format(currrent_user), 'w') as f:
         for f_id in friends_id:
-            f.write(api.get_user(f_id).screen_name + '\n')
+            name = api.get_user(f_id).screen_name
+            print("Write " + name)
+            f.write(name + ' \n')
 
 
 if __name__ == "__main__":
