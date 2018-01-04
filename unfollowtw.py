@@ -47,9 +47,10 @@ def main(consumer_key, consumer_secret, access_token,
         if len(api.followers_ids(list_friends[fr])) < 200:
             api.destroy_friendship(list_friends[fr])
             print("Unfollow " + list_friends[fr])
-            f.write(list_friends[fr] + '\n')
+            f.write(list_friends[fr] + ' \n')
         else:
-            f.write(list_friends[fr] + '\n')
+            print("Add " + list_friends[fr] + " to file")
+            f.write(list_friends[fr] + ' \n')
 
     f.close()
 
