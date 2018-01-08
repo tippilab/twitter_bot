@@ -1,23 +1,23 @@
 import os
-
+import logging
 import click
 import tweepy
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 @click.command()
-@click.option('--consumer_key', default=os.environ.get('CONSUMER_KEY'),
-              help='CONSUMER_KEY')
-@click.option('--consumer_secret', default=os.environ.get('CONSUMER_SECRET'),
-              help='CONSUMER_KEY')
-@click.option('--access_token', default=os.environ.get('ACCESS_TOKEN'),
-              help='ACCESS_TOKEN')
-@click.option('--access_token_secret',
-              default=os.environ.get('ACCESS_TOKEN_SECRET'),
-              help='ACCESS_TOKEN_SECRET')
-@click.option('--limit', default=1000,
+@click.option('--limit', default=100,
               help='set limit amount of users you want to follow')
-def main(consumer_key, consumer_secret, access_token,
-         access_token_secret, limit):
+
+def main(limit):
+
+    consumer_key = os.environ.get('CONSUMER_KEY')
+    consumer_secret = os.environ.get('CONSUMER_SECRET')
+    access_token = os.environ.get('ACCESS_TOKEN')
+    access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
+
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
@@ -41,19 +41,15 @@ def main(consumer_key, consumer_secret, access_token,
 
     list_friends = [x for x in friends if x not in friends_cache]
 
-    f = open('friends_cache_{}.txt'.format(currrent_user), 'a')
-
-    for fr in range(limit):
-        if len(api.followers_ids(list_friends[fr])) < 200:
-            api.destroy_friendship(list_friends[fr])
-            print("Unfollow " + list_friends[fr])
-            f.write(list_friends[fr] + ' \n')
-        else:
-            print("Add " + list_friends[fr] + " to file")
-            f.write(list_friends[fr] + ' \n')
-
-    f.close()
-
+    with open('friends_cache_{}.txt'.format(currrent_user), 'a') as f:
+        for fr in range(limit):
+            if len(api.followers_ids(list_friends[fr])) < 200:
+                api.destroy_friendship(list_friends[fr])
+                logger.info("Unfollow %s", list_friends[fr])
+                f.write(list_friends[fr] + ' \n')
+            else:
+                logger.info("Add %s to file", list_friends[fr])
+                f.write(list_friends[fr] + ' \n')
 
 if __name__ == "__main__":
     main()
