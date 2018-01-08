@@ -44,7 +44,7 @@ def main(limit):
     with open('friends_cache_{}.txt'.format(currrent_user), 'a') as f:
         for fr in range(limit):
             try:
-                if api.get_user(list_friends[fr]).friends_count < 200:
+                if api.get_user(list_friends[fr]).followers_count < 200:
                     api.destroy_friendship(list_friends[fr])
                     logger.info("Unfollow %s", list_friends[fr])
                     f.write(list_friends[fr] + ' \n')
