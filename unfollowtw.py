@@ -1,10 +1,38 @@
 import logging
+import logging.config
 import os
 
 import click
 import tweepy
 
-logging.basicConfig(level=logging.INFO)
+CUSTOM_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'my_formatter': {
+            'format': '%(asctime)s %(levelname)s - %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'my_formatter'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+
+        },
+        '__main__': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+        },
+    }
+}
+
+logging.config.dictConfig(CUSTOM_CONFIG)
 logger = logging.getLogger(__name__)
 
 @click.command()
