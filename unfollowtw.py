@@ -1,38 +1,10 @@
 import logging
-import logging.config
 import os
 
 import click
 import tweepy
 
-CUSTOM_CONFIG = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'my_formatter': {
-            'format': '%(asctime)s %(levelname)s - %(message)s'
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'my_formatter'
-        }
-    },
-    'loggers': {
-        '': {
-            'level': 'INFO',
-
-        },
-        '__main__': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        },
-    }
-}
-
-logging.config.dictConfig(CUSTOM_CONFIG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @click.command()
@@ -79,14 +51,17 @@ def main(limit):
                 else:
                     logger.info("Add %s to file", list_friends[fr])
                     f.write(list_friends[fr] + ' \n')
-            except TypeError:
-                if len(api.followers_ids(list_friends[fr])) < 200:
-                    api.destroy_friendship(list_friends[fr])
-                    logger.info("Unfollow %s", list_friends[fr])
-                    f.write(list_friends[fr] + ' \n')
-                else:
-                    logger.info("Add %s to file", list_friends[fr])
-                    f.write(list_friends[fr] + ' \n')
+            except:
+                try:
+                    if len(api.followers_ids(list_friends[fr])) < 200:
+                        api.destroy_friendship(list_friends[fr])
+                        logger.info("Unfollow %s", list_friends[fr])
+                        f.write(list_friends[fr] + ' \n')
+                    else:
+                        logger.info("Add %s to file", list_friends[fr])
+                        f.write(list_friends[fr] + ' \n')
+                except:
+                    pass
 
 if __name__ == "__main__":
     main()
