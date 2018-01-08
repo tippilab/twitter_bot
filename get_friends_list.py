@@ -1,21 +1,18 @@
+import logging
 import os
 
-import click
 import tweepy
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-@click.command()
-@click.option('--consumer_key', default=os.environ.get('CONSUMER_KEY'),
-              help='CONSUMER_KEY')
-@click.option('--consumer_secret', default=os.environ.get('CONSUMER_SECRET'),
-              help='CONSUMER_KEY')
-@click.option('--access_token', default=os.environ.get('ACCESS_TOKEN'),
-              help='ACCESS_TOKEN')
-@click.option('--access_token_secret',
-              default=os.environ.get('ACCESS_TOKEN_SECRET'),
-              help='ACCESS_TOKEN_SECRET')
-def main(consumer_key, consumer_secret, access_token,
-         access_token_secret):
+
+def main():
+
+    consumer_key = os.environ.get('CONSUMER_KEY')
+    consumer_secret = os.environ.get('CONSUMER_SECRET')
+    access_token = os.environ.get('ACCESS_TOKEN')
+    access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
@@ -33,7 +30,7 @@ def main(consumer_key, consumer_secret, access_token,
     with open('friends_{}.txt'.format(currrent_user), 'w') as f:
         for f_id in friends_id:
             name = api.get_user(f_id).screen_name
-            print("Write " + name)
+            logger.info("Write %s", name)
             f.write(name + ' \n')
 
 
