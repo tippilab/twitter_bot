@@ -61,4 +61,4 @@ def main(limit):
                     f.write(list_friends[fr] + ' \n')
 
 if __name__ == "__main__":
-    main(limit)
+    main()
