@@ -1,8 +1,8 @@
-import os
 import logging
+import os
+
 import click
 import tweepy
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,13 +43,22 @@ def main(limit):
 
     with open('friends_cache_{}.txt'.format(currrent_user), 'a') as f:
         for fr in range(limit):
-            if len(api.followers_ids(list_friends[fr])) < 200:
-                api.destroy_friendship(list_friends[fr])
-                logger.info("Unfollow %s", list_friends[fr])
-                f.write(list_friends[fr] + ' \n')
-            else:
-                logger.info("Add %s to file", list_friends[fr])
-                f.write(list_friends[fr] + ' \n')
+            try:
+                if api.get_user(list_friends[fr]).friends_count < 200:
+                    api.destroy_friendship(list_friends[fr])
+                    logger.info("Unfollow %s", list_friends[fr])
+                    f.write(list_friends[fr] + ' \n')
+                else:
+                    logger.info("Add %s to file", list_friends[fr])
+                    f.write(list_friends[fr] + ' \n')
+            except TypeError:
+                if len(api.followers_ids(list_friends[fr])) < 200:
+                    api.destroy_friendship(list_friends[fr])
+                    logger.info("Unfollow %s", list_friends[fr])
+                    f.write(list_friends[fr] + ' \n')
+                else:
+                    logger.info("Add %s to file", list_friends[fr])
+                    f.write(list_friends[fr] + ' \n')
 
 if __name__ == "__main__":
-    main()
+    main(limit)
