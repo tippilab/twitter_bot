@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @click.command()
-@click.option('--limit', default=100,
+@click.option('--limit', default=1000,
               help='set limit amount of users you want to follow')
 
 def main(limit):
