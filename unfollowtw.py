@@ -47,8 +47,8 @@ def main():
                     else:
                         logger.info("Add %s to file", fr)
                         f.write(fr + ' \n')
-                except:
-                    logger.ERROR("Pass first try!")
+                except Exception:
+                    logging.exception("Pass first try!")
                     try:
                         if len(api.followers_ids(fr)) < 200:
                             api.destroy_friendship(fr)
@@ -57,11 +57,11 @@ def main():
                         else:
                             logger.info("Add %s to file", fr)
                             f.write(fr + ' \n')
-                    except:
-                        logger.ERROR("Pass second try!")
+                    except Exception:
+                        logging.exception("Pass second try!")
                         pass
-        except:
-            logger.ERROR("Pass iterate through the list!")
+        except Exception:
+            logging.exception("Pass iterate through the list!")
             pass
 
 if __name__ == "__main__":
