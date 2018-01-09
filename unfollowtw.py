@@ -1,17 +1,12 @@
 import logging
 import os
 
-import click
 import tweepy
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@click.command()
-@click.option('--limit', default=1000,
-              help='set limit amount of users you want to follow')
-
-def main(limit):
+def main():
 
     consumer_key = os.environ.get('CONSUMER_KEY')
     consumer_secret = os.environ.get('CONSUMER_SECRET')
@@ -42,26 +37,32 @@ def main(limit):
     list_friends = [x for x in friends if x not in friends_cache]
 
     with open('friends_cache_{}.txt'.format(currrent_user), 'a') as f:
-        for fr in range(limit):
-            try:
-                if api.get_user(list_friends[fr]).followers_count < 200:
-                    api.destroy_friendship(list_friends[fr])
-                    logger.info("Unfollow %s", list_friends[fr])
-                    f.write(list_friends[fr] + ' \n')
-                else:
-                    logger.info("Add %s to file", list_friends[fr])
-                    f.write(list_friends[fr] + ' \n')
-            except:
+        try:
+            for fr in list_friends:
                 try:
-                    if len(api.followers_ids(list_friends[fr])) < 200:
-                        api.destroy_friendship(list_friends[fr])
-                        logger.info("Unfollow %s", list_friends[fr])
-                        f.write(list_friends[fr] + ' \n')
+                    if api.get_user(fr).followers_count < 200:
+                        api.destroy_friendship(fr)
+                        logger.info("Unfollow %s", fr)
+                        f.write(fr + ' \n')
                     else:
-                        logger.info("Add %s to file", list_friends[fr])
-                        f.write(list_friends[fr] + ' \n')
+                        logger.info("Add %s to file", fr)
+                        f.write(fr + ' \n')
                 except:
-                    pass
+                    logger.ERROR("Pass first try!")
+                    try:
+                        if len(api.followers_ids(fr)) < 200:
+                            api.destroy_friendship(fr)
+                            logger.info("Unfollow %s", fr)
+                            f.write(fr + ' \n')
+                        else:
+                            logger.info("Add %s to file", fr)
+                            f.write(fr + ' \n')
+                    except:
+                        logger.ERROR("Pass second try!")
+                        pass
+        except:
+            logger.ERROR("Pass iterate through the list!")
+            pass
 
 if __name__ == "__main__":
     main()
