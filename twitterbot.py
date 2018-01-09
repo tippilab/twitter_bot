@@ -4,8 +4,8 @@ import sys
 import time
 import traceback
 
-import tweepy
 import click
+import tweepy
 
 
 @click.command()
@@ -49,17 +49,22 @@ def main(consumer_key, consumer_secret, access_token,
     try:
         for user in list_users:
             if user and user not in cached_users:
-                print("Follow " + user)
                 try:
-                    api.create_friendship(user)
-                except tweepy.error.TweepError:
-                    traceback.print_exc(file=sys.stdout)
-                cached_users.append(user)
-                counter += 1
-                if counter >= limit:
-                    return
-            else:
-                print("Skipped " + user + '\n')
+                    if api.get_user(user).followers_count > 200:
+                        counter = create_fr(api, user, cached_users,
+                                                   counter, limit)
+                    else:
+                        print("Skipped " + user + '\n')
+                except:
+                    try:
+                        if len(api.followers_ids(user)) < 200:
+                            counter = create_fr(api, user, cached_users,
+                                                       counter, limit)
+                        else:
+                            print("Skipped " + user + '\n')
+                    except:
+                        pass
+
     finally:
         with open('followers_cache_{}.txt'.format(currrent_user), 'w') as f:
             f.writelines(["%s\n" % item for item in cached_users])
@@ -83,6 +88,19 @@ def split_list(alist, wanted_parts=1):
     length = len(alist)
     return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
             for i in range(wanted_parts)]
+
+
+def create_fr(api, user, cached_users, counter, limit):
+    print("Follow " + user)
+    try:
+        api.create_friendship(user)
+    except tweepy.error.TweepError:
+        traceback.print_exc(file=sys.stdout)
+    cached_users.append(user)
+    counter += 1
+    if counter >= limit:
+        return
+    return counter, limit
 
 
 if __name__ == "__main__":
