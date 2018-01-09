@@ -56,13 +56,6 @@ def main(consumer_key, consumer_secret, access_token,
                     else:
                         print("Skipped " + user + '\n')
                 except:
-                    try:
-                        if len(api.followers_ids(user)) < 200:
-                            counter = create_fr(api, user, cached_users,
-                                                       counter, limit)
-                        else:
-                            print("Skipped " + user + '\n')
-                    except:
                         pass
 
     finally:
