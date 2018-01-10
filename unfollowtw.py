@@ -30,13 +30,13 @@ def main():
             friends.append(line.strip())
 
     friends_cache = []
-    with open('friends_cache_{}.txt'.format(currrent_user), 'r') as f:
+    with open('friends_un_cache_{}.txt'.format(currrent_user), 'r') as f:
         for line in f:
             friends_cache.append(line.strip())
 
     list_friends = [x for x in friends if x not in friends_cache]
 
-    with open('friends_cache_{}.txt'.format(currrent_user), 'a') as f:
+    with open('friends_un_cache_{}.txt'.format(currrent_user), 'a') as f:
         try:
             for fr in list_friends:
                 try:
