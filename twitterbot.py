@@ -38,11 +38,11 @@ def main(limit, filename):
         retry_errors=None
     )
 
-    currrent_user = api.me().screen_name
-    cached_users = cache_handler(api, currrent_user)
+    current_user = api.me().screen_name
+    cached_users = cache_handler(api, current_user)
     counter = 0
     try:
-        with open('followers_cache_{}.txt'.format(currrent_user), 'r') as f:
+        with open('followers_cache_{}.txt'.format(current_user), 'r') as f:
             cached_local_users = [line.rstrip('\n') for line in f]
         logger.debug("Successfull reading of local cache")
     except:
@@ -55,31 +55,30 @@ def main(limit, filename):
             if user and user not in cached_users:
                 try:
                     if api.get_user(user).followers_count > 200:
-                        logger.info("Follow {}".format(user))                        
+                        logger.info("Follow %s", user)
                         api.create_friendship(user)
                 except tweepy.error.TweepError:
                     logger.exception('')
                 cached_users.append(user)
                 counter += 1
                 if counter >= limit:
-                    logger.info("The limit of {} followings is reached".format(
-                        limit))
+                    logger.info("The limit of %s followings is reached", limit)
                     return
             else:
-                logger.info("Skipped {}".format(user))
+                logger.info("Skipped %s", user)
     finally:
-        logger.info('Writiind local cache into"followers_cache_{}.txt"'.format(
-            currrent_user))
-        with open('followers_cache_{}.txt'.format(currrent_user), 'w') as f:
+        logger.info('Writiind local cache into"followers_cache_%s.txt"',
+                    current_user)
+        with open('followers_cache_{}.txt'.format(current_user), 'w') as f:
             f.writelines(["%s\n" % item for item in cached_users])
 
 
-def cache_handler(api, currrent_user):
+def cache_handler(api, current_user):
     usernames = []
     logger.info(
-        "Start fetching {} follwers into local cache".format(currrent_user))
+        "Start fetching %s follwers into local cache", current_user)
     for page in tweepy.Cursor(api.friends_ids,
-                              screen_name=currrent_user).pages():
+                              screen_name=current_user).pages():
         wanted_parts = round(len(page) / 100) + 1
         parts = split_list(page, wanted_parts)
         for part in parts:
