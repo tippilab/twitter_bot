@@ -40,7 +40,7 @@ def main():
         try:
             for fr in list_friends:
                 try:
-                    if api.get_user(fr).followers_count < 200:
+                    if api.get_user(fr).followers_count < 300:
                         api.destroy_friendship(fr)
                         logger.info("Unfollow %s", fr)
                         f.write(fr + ' \n')
@@ -50,7 +50,7 @@ def main():
                 except Exception:
                     logging.exception("Pass first try!")
                     try:
-                        if len(api.followers_ids(fr)) < 200:
+                        if len(api.followers_ids(fr)) < 300:
                             api.destroy_friendship(fr)
                             logger.info("Unfollow %s", fr)
                             f.write(fr + ' \n')

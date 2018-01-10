@@ -54,7 +54,7 @@ def main(limit, filename):
         for user in list_users:
             if user and user not in cached_users:
                 try:
-                    if api.get_user(user).followers_count > 200:
+                    if api.get_user(user).followers_count > 300:
                         logger.info("Follow %s", user)
                         api.create_friendship(user)
                 except tweepy.error.TweepError:
