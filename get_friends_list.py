@@ -24,10 +24,10 @@ def main():
         retry_errors=5
     )
 
-    currrent_user = api.me().screen_name
-    friends_id = api.friends_ids(currrent_user)
+    current_user = api.me().screen_name
+    friends_id = api.friends_ids(current_user)
 
-    with open('friends_{}.txt'.format(currrent_user), 'w') as f:
+    with open('friends_{}.txt'.format(current_user), 'w') as f:
         for f_id in friends_id:
             name = api.get_user(f_id).screen_name
             logger.info("Write %s", name)
